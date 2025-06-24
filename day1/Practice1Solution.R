@@ -99,6 +99,6 @@ min(random)
 # Create a vector of 5 student names
 name=c("Andrew","Calvin","Elliot","Nick", "Finn")
 # Create a vector of 5 ages
-age=c(17,17,17,16,17)
+age=c(17,16,17,16,17)
 # Use the paste command to print out the name and age of each student in the format, "NAME is AGE years old"
 paste(name,"is",age,"years old")
