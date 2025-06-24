@@ -11,7 +11,7 @@ log_b=log10(b)
 # Create a variable a_squared that stores a raised to the power of 2.
 a_squared=a^2
 # Create a variable quotient that stores the integer result of dividing 100 by 9.
-quotient=100%%9
+quotient = 100 %/% 9
 # Create a vector called math_vec that contains all six variables from above.
 math_vec=c(a,b,abs_a,log_b,a_squared,quotient)
 #Use functions only to generate the following vectors (Do not hard-code the values):
@@ -20,8 +20,7 @@ every_5th=seq(from=5, to=100,by=5)
   # A vector that starts at 50, goes down by 5, and stops at 5
 every_5thDown=seq(from=50,to=5,by=-5)
   # A vector that repeats the numbers (2, 4, 6) 15 times in a row
-abc=c(2,4,6)
-rep(abc,15)
+rep(c(2,4,6),15)
   # A vector that repeats: sixteen 2s in a row then ten 4s in a row then ten 6s in a row
 c(rep(2,16),rep(4,10),rep(6,10))
 # Create a vector called rand_nums containing 30 random integers from 1 to 100 (allow repeats).
