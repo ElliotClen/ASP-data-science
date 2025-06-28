@@ -1,0 +1,320 @@
+---
+title: "College Debt Exploration"
+author: "Your Name Here"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Data Science Project: Use data to determine the best and worst colleges for conquering student debt.
+
+Notebook 1: Basic R Commands & Data Exploration
+
+Does college pay off? We'll use some of the latest data from the US Department of Education's (https://collegescorecard.ed.gov/data/) College Scorecard Database to answer that question. In this first notebook, you'll get a gentle introduction to R - a coding language used by data scientists to analyze large datasets. Then, you'll begin diving into the college scorecard data yourself. By the end of this notebook, you'll get a general sense of which colleges set up their graduates for success and which colleges ... don't.
+
+
+
+```{r, warning=FALSE, message = FALSE}
+library(coursekata)
+```
+
+1.0 - Exploring the dataset
+
+To begin, let's download our data. Our full dataset is included in a file named colleges.csv, which we're retrieving from the skewthescript.org website. The command below downloads the data from the file and stores it into an R dataframe object called dat.
+
+Run this code but do not edit it. This command downloads data and stores it in the object `dat`
+```{r}
+dat <- read.csv('https://skewthescript.org/s/colleges.csv')
+```
+
+The <- operator is used to store values. For example, x<-10 stores the value of 10 in x, meaning the value 10 is saved in the object x.
+
+To get a quick view of the dataframe (dat), we can use the head command to print out its first several rows.
+
+Run this code but do not edit it. This command prints out the first several rows of the dataset
+```{r}
+head(dat)
+```
+
+The vertical columns of the dataframe are called variables, and their elements are called values. For example, the variable city has values Normal, Birmingham, Montgomery, Huntsville, etc.
+
+The horizontal rows of the dataframe are called observations. For example, the first observation is Alabama A & M University, which is located in AL (Alabama), in the city of Normal, and has a median student debt of $15,250. For this dataframe, each observation describes a specific college.
+
+1.1 - Of the variables displayed, identify one that is quantitative, one that is categorical, and one that is a unique identifier.
+
+## YOUR RESPONSE HERE.
+
+
+The head command only displays several rows of the dataframe. To see the full dimensions of the dataframe, we can use the dim command.
+
+1.2 - Use the dim command on dat to display the dimensions of the dataframe.
+
+# Your code goes here
+```{r}
+dim(dat)
+```
+
+Check yourself: Your code should have printed out two numbers: 4435 and 26.
+
+The first number outputted by dim is the number of horizontal rows in the dataframe. This represents the number of observations (number of colleges). The second number is the number of vertical columns in the dataframe. This represents the number of variables. What are all these variables? See the description of the dataset below, along with links to descriptions of all the variables.
+
+General description - The US Department of Education's Scorecard Database shows various metrics of cost, enrollment, size, student debt, student demographics, and alumni success. It describes almost every University, college, community college, trade school, and certificate program in the United States. The data is current as of the 2020-2021 school year.
+
+With such a large dataset, to make your life easier, you may want to work with only a few variables at a time. In the following code, we use the select command to select only the variables name, median_debt, ownership, admit_rate, and hbcu and save them in a new dataframe called example_dat.
+
+Run this code but do not edit it. Select certain columns from dat, store into example_dat
+```{r}
+example_dat <- select(dat, name, median_debt, ownership, admit_rate, hbcu)
+```
+
+# Display head of example_dat
+```{r}
+head(example_dat)
+```
+
+1.3 - Use the select command to select the variables name, region, default_rate, ownership, and pct_PELL from dat. Store your new dataframe in an object called my_dat and display its head.
+
+# Your code goes here
+```{r}
+my_dat=select(dat,name,region,default_rate,ownership,pct_PELL)
+```
+
+In addition to filtering out columns (variables), we can also filter out rows (observations). For example, if I only wanted to analyze colleges that are HBCUs and that have an admissions rate below than 40%, I can use the subset command on example_dat like this:
+
+Run this code but do not edit it. Subset example_dat to only HBCUs with admissions rates lower than 40%
+
+```{r}
+subset(example_dat, hbcu == "Yes" & admit_rate < 40)
+```
+
+A total of 7 colleges fit these conditions.
+
+Note that R has different conventions for comparative statements. For example... 
+
+== means equals exactly 
+!= means does not equal
+< means less than
+> means greater than
+<= means less than or equal to
+>= means greater than or equal to
+
+Here are some other common conditional symbols
+| means or 
+& means and
+
+1.4 - Use the subset command to find the colleges in my_dat that are located in the Midwest region of the United States and have more than a third of their students (greater than 33%) default on their loans.
+
+# Your code goes here
+```{r}
+subset(my_dat, region=="Midwest"&default_rate>=33)
+```
+
+Check yourself: You should find that 2 schools match your selection criteria.
+
+1.5 - What do you notice about the observations that fit your selection criteria? What do you wonder?
+
+
+## Beauty school. why so hard to get job?
+
+
+Suppose you're interested in a particular college, such as Howard University. We can use the subset command to filter the example_dat dataframe and focus solely on the information pertaining to that college.
+
+## Run this code but do not edit it
+# Subset example_dat to only show Howard University
+```{r}
+subset(example_dat, name == "Howard University")
+```
+
+
+1.6 - Select a college that interests you. Then use the subset command to locate and extract information about the college from my_dat. Note: The exact spelling of the names of all the colleges in the dataset can be found at https://docs.google.com/spreadsheets/d/1gdLqIbMl2zF1JrCGvGB6Z3XCFR_368dd2S97Hja-E60/edit?usp=sharing" 
+
+# Your code goes here
+```{r}
+subset(my_dat,name=="Franklin W Olin College of Engineering")
+```
+
+
+One further way to explore a dataset is to reorder its observations. For example, we can use the arrange command to order the colleges in example_dat by their admission rate:
+
+## Run this code but do not edit it
+# Arrange data in order of their admission rates
+```{r}
+arrange(example_dat, admit_rate)
+
+```
+
+As we can see, the most selective schools now top the list. You'll see some NA values from admit_rate at the bottom of the arranged dataset. These are missing values, which we'll discuss later.
+
+To arrange the data in descending order of admission rates (highest admission rates on top), we can use the desc argument within our arrange command:
+
+Run this code but do not edit it. Arrange data in descending order of their admission rates
+```{r}
+arrange(example_dat, desc(admit_rate))
+```
+
+
+1.7 - Use the arrange command to organize the colleges in my_dat such that the colleges with the highest student loan default rates are at the top.
+
+# Your code goes here
+```{r}
+arrange(my_dat,desc(default_rate))
+```
+
+
+1.8 - What patterns do you notice among the programs that have the highest student loan default rates? What do you wonder?
+
+
+## Beauty/Barber schools. Job market?
+
+
+2.0 - Finding summary statistics
+
+When analyzing variables of interest, it's often helpful to calculate summary statistics. For quantitative variables, we can use the summary command to find the five-number summary (minimum, Q1, median, Q3, maximum) and the average (mean) of the values. The code block shows how we find these summary statistics for the admit_rate variable.
+
+Note: The $ sign in R is used to isolate a single variable (admit_rate) from a full dataframe (dat).
+
+Run this code but do not edit it. Find summary statistics for admit_rate
+```{r}
+summary(dat$admit_rate)
+```
+
+A few interesting facts about admit_rate that are revealed by this summary: - As expected, no schools have a 0% admissions rate (the minimum admissions rate is 2.4%). - The maximum admissions rate was 100%. So, there's at least one school that admits every applicant. - The first quartile (Q1) is a 59.79% admissions rate. This means only 25% of schools have admissions rates lower than 59.79%. - For 2,731 schools, we have missing data. R uses the sybmol NA to represent missing values. If we use admit_rate in future analyses, we should pay attention to which schools have missing data and, ideally, investigate why their data is missing.
+
+2.1 - Use the summary command to get summary statistics for the default_rate variable in the dat dataframe.
+
+# Your code goes here
+```{r}
+summary(dat$default_rate)
+```
+
+
+Check yourself: The median should be 8.20
+
+2.2 - Comment on what these summary statistics reveal about the default_rate values in our dataset.
+
+
+## Lower than expected
+
+
+
+For categorical data, it doesn't make sense to find means and medians. Instead, it's helpful to look at value counts and proportions. We can use the table command to find the counts of the different values for highest_degree:
+
+Run this code but do not edit it. Find counts of values for highest_degree, store in object 'degree_counts'
+```{r}
+degree_counts <- table(dat$highest_degree)
+```
+
+# Print table stored in 'degree_counts'
+```{r}
+degree_counts
+```
+
+
+1464 of the institutions in our dataset are Universities that offer graduate degrees. On the other end of the spectrum, 1374 of the institutions aren't Universities at all. Rather, they are career-oriented programs that offer trade certificates.
+
+To get a better sense of scale, we can turn these raw counts into proportions by dividing them by the total:
+
+Run this code but do not edit it. Sum all counts in table, store in object 'total'
+```{r}
+total <- sum(degree_counts)
+```
+
+Print the value stored in 'total'
+```{r}
+total
+```
+
+
+Run this code but do not edit it. Divide the table by the total to get proportions
+```{r}
+degree_counts / total
+```
+
+
+As you can see, you can use R just like a calculator. Addition, subtraction, multiplication, division ... it's all there. Universities offering graduate degrees make up about 33% of the institutions in our dataset. These are about three times more prevalent than 4-year colleges (Bachelors) that don't offer graduate degrees.
+
+2.3 - Use the table command to get the value counts for the ownership variable.
+
+# Your code goes here
+```{r}
+table(my_dat$ownership)
+```
+
+Check yourself: There are 1539 public schools in the dataset
+
+2.4 - Find the proportion of all institutions that are public, private nonprofit, and private for-profit.
+
+# Your code goes here
+```{r}
+table(my_dat$ownership)/nrow(my_dat)
+```
+
+Check yourself: About 34.7% of the schools in the dataset are public schools
+
+3.0 - Visualizing data (histograms, barplots, and boxplots)
+
+In addition to summary statistics, a great way to get an overall impression of our data is to visualize it. In this section, we'll walk through different types of visualizations we can create in R. Note: We're saving scatterplots for the next notebook in our series.
+
+One of the most useful visualizations for displaying a quantitative variable is a histogram. Here, we use the gf_histogram command to display the histogram for admit_rate.
+
+Run this code but do not edit it. Create histogram for admit_rate
+```{r}
+hist(dat$admit_rate, xlab = "Admission Rate", main = "Distribution of Admission Rates at Colleges", col = "mistyrose")
+```
+
+As we suspected from the summary statistics, it appears that most programs have admissions rates well above 50%, and only a small subset of programs have highly selective admissions rates. In statistics, we call this distribution left skew, since there's a tail on the left side. So, institutions with low values (low admissions rates) are relatively unusual compared to most of the other institutions in our dataset.
+
+3.1 - Create a histogram to visualize all the default_rate values in the dat dataframe.
+
+# Your code goes here
+```{r}
+hist(my_dat$default_rate)
+```
+
+3.2 - Describe the distribution and note any features of interest.
+
+
+## Heavily right skewed. Basically stops at 30
+
+
+
+To visualize categorical variables, we can use the gf_bar command to make bar plots. Here we create a bar plot for highest_degree:
+
+Run this code but do not edit it. Create bar plot for highest_degree
+```{r}
+barplot(table(dat$highest_degree), main = "Distribution of Highest Degree Offered", col = rainbow(4))
+```
+
+As shown here, most of the institutions in our dataset are Universities that graduate degrees or trade programs that offer professional certificates. There are about 500 colleges that only offer bachelors degrees (without offering graduate degrees).
+
+3.3 - Create a bar plot to visualize the ownership values from the dat dataframe.
+
+# Your code goes here
+```{r}
+barplot(table(my_dat$ownership))
+```
+
+
+3.4 - Describe the distribution and note any features of interest.
+
+
+## Not many private nonprofits
+
+
+Sometimes, we may want to explore the relationship between two variables by visualizing them both at once. When we want to visualize the relationship between a categorical variable and quantitative variable, we can use boxplots. Here, we show how to use gf_boxplot to visualize the relationship between highest_degree (categorical) and admit_rate (quantitative).
+
+Run this code but do not edit it.Create boxplots for admit_rates of institutions with different highest_degree values
+```{r}
+boxplot(dat$admit_rate~dat$highest_degree, xlab = "Highest Degree Offered", ylab = "Admission Rate", col = rainbow(4))
+```
+
+In this case, we're using highest_degree as the predictor variable and admit_rate as the outcome variable. In other words, we can use the degree level of an institution (certificate, associates, bachelors, etc.) to help predict its admission rate. That's because certain levels of institutions typically have lower admissions rates than others. So, knowing the level of an institution can help us better predict its admissions rate.
+
+Note: This predictor-outcome relationship is coded in R through the syntax outcome ~ predictor, as in gf_boxplot(admit_rate ~ highest_degree,...).
+
+We see that admission rates tend to be lower (lower medians) for colleges / Universities that grant bachelors and graduate degrees. However, it's worth noting that for every institution-type, the first quartile is higher than a 50% admissions rate. So, most programs admit more than half their applicants, regardless of insitution-type. Indeed, we see that the most prestigious Universities with admissions rates lower than 25% are outliers (visualized as dots on the boxplot) among other Universities that offer graduate degrees.
+
+
