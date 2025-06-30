@@ -1,0 +1,214 @@
+---
+title: "Week 1 Assessment"
+author: "Your Name Here"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+INSTRUCTIONS:
+
+The purpose of this assignment is for you to reflect and see how you are doing on the things we have learned throughout the first week. Try to do as much of this alone as possible so that you can get a good sense of what you actually know. For any graph you make, be sure to make it nice - add colors, titles, and labels!
+
+Jess will be in the library on Sunday from 7:30 - 8:30 if you have any questions. 
+
+When you are finished, save your work and upload this file to your homework folder that Margaret shared with you on Saturday! If you need help uploading, we can do that on Monday morning at the beginning of class. 
+
+
+QUESTION 1: Use the mtcars dataset to answer the following questions.
+
+Run the following code.
+```{r}
+data(mtcars)
+head(mtcars)
+```
+a) What is the data type of mpg - quantitative continuous, quantitative discrete, categorical ordinal, or categorical nominal? (hint you can search for mtcars in the help window)
+#continuous
+
+b) What is a categorical variable that you could collect about the cars that is not already represented in the dataset?
+#fuel type
+
+c) Create one appropriate graph for the weight variable then describe the distribution.
+
+```{r}
+boxplot(mtcars$wt,horizontal = TRUE,main="Car Weight",xlab="Weight (1000lb)",col = "red")
+
+#relatively normal, slightly left skewed with outliers at the top end
+```
+
+d) Create one appropriate graph for the engine variable. Treat it as categorical.
+
+```{r}
+vs_labels=table(mtcars$vs)
+barplot(vs_labels,names.arg = c("V shaped","Straight"),main="Number of cars by engine type",xlab="Engine Types", ylab = "Count of Cars",col = c("orange","yellow"))
+```
+
+e) Create a graph with 3 boxplots (one for each number of cylinders). The y-axis should be mpg. HINT: boxplot(y_axis_variable ~ x_axis_variable)
+
+```{r}
+boxplot(mpg~cyl,data = mtcars,main="MPG by Number of Cyliners",ylab = "Number of Cylinders",xlab = "Miles per Gallon",col=c("green","blue","purple"),horizontal = TRUE)
+```
+
+Run the following line of code.
+```{r}
+barplot(table(mtcars$vs, mtcars$cyl), col = rainbow(2), xlab = "Number of Cylinders")
+legend("topleft", legend = c("V-Shaped", "Straight"), fill = rainbow(2), title = "Engine Shape")
+```
+
+f) Based on the graph above, determine if there is an association between number of cylinders and engine shape. Explain what you can conclude from the graph.
+#There is defenitely an association between shape and cylinder. A vast majority of 4 cylinders are straight engines, while all 8 cylinders are V-shaped
+
+
+g) Calculate the lower and upper threshold for outliers in the mpg variable using the 1.5IQR rule. How many outliers are there? Use any approach!
+
+```{r}
+mean(mtcars$mpg)
+upper=mean(mtcars$mpg)+sd(mtcars$mpg)
+lower=mean(mtcars$mpg)+sd(mtcars$mpg)
+one.sd=subset(mtcars,mpg>lower&mpg<upper)
+
+highoutliers=22.8+1.5*IQR(mtcars$mpg)
+lowoutliers=15.43-1.5*IQR(mtcars$mpg)
+summary(mtcars$mpg)
+
+#One outlier,33.9
+```
+
+
+QUESTION 2: Think about our pilot activity! 
+
+A teacher told me that he is an 80% free throw shooter. I didn’t believe him so we went to the gym and I made him shoot 50 free throws. He made 32 of them. He told me he just got unlucky. I said, ok maybe, lemme check if that’s reasonable… so I conducted a simulation in R using the code below. Run this code.
+
+```{r}
+# repeat procedure 200 times
+results = c();
+for(i in 1:200){
+  # take a sample for a dataset where there are 8 1's representing successful throws and 2 0's representing unsuccessful throws. 
+  # don't worry! we will talk more about this code later!
+  results[i] = sum(sample(c(1,1,1,1,1,1,1,1,0,0), 50 ,replace = TRUE))
+}
+
+stripchart(results, method = "stack",ylim = c(0,250), xlab = "Number of successful throws in one trial of 50 free throws", main = "Simulating 50 Free throws with an 80% Success Rate")
+```
+
+a) Is it a RARE or COMMON occurrence for an 80% free throw shooter? Should I believe the teacher who told me that they are an 80% free throw shooter? Why or why not?
+
+#it's definitely possible, but not remotely guaranteed while the graph appears right skewed, it's not a massive amount
+
+QUESTION 3: The weight for a certain breed of geese follows a normal distribution and has mean = 2.1 kg and standard deviation = 0.8 kg. N(2.1, 0.8)
+
+a) What is the z-score of a goose from this population who weighs 3.9 kgs?
+(you can use code to calculate but you don't need to!)
+
+```{r}
+z=(3.9-2.1)/0.8
+```
+
+
+b) What percentage of geese weigh less than 1.9 kgs?
+
+```{r}
+pnorm(1.9,2.1,.8)
+```
+
+
+c) What is the weight of a goose who is in the 72nd percentile?
+
+```{r}
+qnorm(.72,2.1,.8)
+```
+
+d) What percentage of geese weigh between 2 and 3kg?
+
+```{r}
+pnorm(2,2.1,.8)
+pnorm(3,2.1,.8,lower.tail = FALSE)
+1-(.4503+.1203)
+```
+
+
+QUESTION 4: Use the iris dataset to answer the following questions.
+
+```{r}
+library(datasets)
+data("iris")
+head(iris)
+```
+
+a) What are the dimensions of the iris dataset? How many variables and how many observations?
+
+```{r}
+dim(iris)
+observations=150*5
+#5 variables
+```
+
+b) Print out the Sepal.Length variable
+
+```{r}
+iris$Sepal.Length
+```
+
+c) Generate the summary for the Sepal.Width variable.
+
+```{r}
+summary(iris$Sepal.Width)
+```
+
+d) WHAT is the minimum value of the Petal.Width variable?
+
+```{r}
+min(iris$Petal.Width)
+```
+
+e) WHERE is the minimum value of the Petal.Width variable?
+
+```{r}
+
+```
+
+f) What is the median of the sepal width variable?
+
+```{r}
+median(iris$Sepal.Width)
+```
+
+g) What is the value of the 5th row, 3rd column in the iris dataset?
+
+```{r}
+iris[5,3]
+```
+
+h) Output the first ten rows and the second column of the dataset.
+
+```{r}
+iris[1:10,2]
+```
+
+i) Output the 3rd column of the dataset.
+
+```{r}
+iris[,3]
+```
+
+j) Create a subset of the iris dataset called sub1 where the Species is “virginica” or Petal.Width is equal to 0.2. Print it out.
+
+```{r}
+sub1=subset(iris, Petal.Width==0.2|Species=="virginica")
+```
+
+
+k) Create a subset of the iris dataset called sub2 where the Species is “setosa” and the Sepal.Width is greater than 3.3. Print it out.
+
+```{r}
+sub2=subset(iris,Species=="setosa"&Sepal.Width>3.3)
+```
+
+l) Subset the iris dataset where Sepal.Length is greater than 4 and Sepal.Width is greater than 3.5 and only shows the variables for Species and Petal.Width?
+
+```{r}
+sub=subset(iris,Sepal.Length>4&Sepal.Width>3.5,select = c(Species,Petal.Width))
+```
+
+QUESTION 5: In your own words, describe how a computer learns to identify things. Describe your understanding of how a neural network works.
+
+#Neurons take in user input and it moves to the next layer. Various steps are performed as the information moves through the layers becoming more and more sophisticated. Eventually the computer will give an output
